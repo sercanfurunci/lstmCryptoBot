@@ -1,0 +1,114 @@
+<html>
+  <head>
+    <title>CoinView</title>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+  </head>
+  <body>
+    <h2>{{title}}</h2>
+
+
+    <form action="">
+      <select id="symbol" name="symbol">
+        {% for symbol in symbols %}
+            <option>{{ symbol['symbol'] }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" name="show" value="show" />
+      <div id="chart"></div>
+    </form>
+
+    <div id="trades"></div>
+
+    <div style="border: solid gray 1px; padding: 20px; width: 600px; margin-top: 20px;">
+      <h3>Buy Crypto</h3>
+      {% with messages = get_flashed_messages() %}
+          {% if messages %}
+          <div style="padding: 10px; margin-bottom: 10px; background: pink; border: solid red 1px; color: red;">
+
+              {% for message in messages %}
+                  {{ message }}
+              {% endfor %}
+          </div>
+
+          {% endif %}
+      {% endwith %}
+
+      <form action="/buy" method="post">
+          <input type="text" id="quantity" name="quantity" placeholder="eg. 0.001" />
+          <select id="symbol" name="symbol">
+              {% for symbol in symbols %}
+                  <option>{{ symbol['symbol'] }}</option>
+              {% endfor %}
+          </select>
+          <input type="submit" name="buy" value="buy" />
+      </form>
+      <form action="/sell" method="post">
+        <input type="text" id="quantity" name="quantity" placeholder="eg. 0.001" />
+        <select id="symbol" name="symbol">
+            {% for symbol in symbols %}
+                <option>{{ symbol['symbol'] }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" name="sell" value="sell" />
+    </form>
+
+  </div>
+
+  <h3>Settings</h3>
+    <form action="/bot" method="post">
+      <div id="settings">
+        RSI
+        <input type="text" name="rsi_length" id="rsi_length" placeholder="14">
+        Overbought
+        <input type="text" name="rsi_overbought" id="rsi_overbought" placeholder="70">
+        Oversold
+        <input type="text" name="rsi_oversold" id="rsi_oversold" placeholder="30">
+        <button> Çalıştır bot</button>
+        
+      </div>
+    </form>
+    <h3>LSTM</h3>
+      <form method="POST" action="/run_python_script">
+        <button type="submit">Run Python Script</button>
+      </form>
+
+    <div id="my_balances">
+      <h2>Balances</h2>
+      <table>            
+        {% for balance in my_balances %}
+        <tr>
+            <td>
+                {{ balance['asset'] }} 
+            </td>
+            <td>
+                {{ balance['free'] }}
+            </td>
+        </tr>
+            
+        {% endfor %}
+    </table>
+    </div>
+    
+  </body>
+  
+  <script>
+    // var binanceSocket = new WebSocket(
+    //   "wss://stream.binance.com:9443/ws/btcusdt@trade"
+    // );
+
+    // var tradeDiv = document.getElementById("trades");
+    // binanceSocket.onmessage = function (e) {
+    //   console.log(e.data);
+
+    //   var messageObject = JSON.parse(e.data);
+
+    //   tradeDiv.append(messageObject.p);
+    // };
+  </script>
+  <script src="{{url_for('static',filename='chart.js ')}}"></script>
+
+  
+
+
+
+</html>
