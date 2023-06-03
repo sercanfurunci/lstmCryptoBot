@@ -1,13 +1,16 @@
 {
-    "builds": [
-      {
-        "src": "index.html",
-        "use": "@vercel/static"
-      }
-    ],
-    "routes": [
-      { "src": "/(.*)", "dest": "/index.html" }
-    ],
+  "builds": [
+    {
+      "src": "templates/index.html",
+      "use": "@vercel/static-build"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/templates/index.html"
+    }
+  ],
     "env": {
       "PYTHONUNBUFFERED": "true",
       "APP_FILE": "backend.py",
