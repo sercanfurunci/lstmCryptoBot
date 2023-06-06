@@ -19,7 +19,7 @@ plt.style.use('fivethirtyeight')
 
 from sklearn.metrics import mean_squared_error
 
-from keras.layers.core import Dense, Activation, Dropout
+from keras.layers.core import Dense
 from keras.layers import LSTM
 from keras.models import Sequential
 

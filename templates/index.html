@@ -1,25 +1,145 @@
 <html>
   <head>
-    <title>CoinView</title>
+    <title>CoinTrade</title>
     <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <style>
+      body {
+        
+        font-family: Arial, sans-serif;
+      background-color: #F8F8F8;
+      margin: 0;
+      padding: 0;
+    display: flex;
+    flex-direction: column;
+    
+    padding-left: 20px;
+      }
+
+      .binance-title {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 24px;
+        color: #f3ba2f;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin: 0;
+        padding: 16px;
+        background-color: #0c0d12;
+        text-align: center;
+      }
+
+      form {
+        margin-bottom: 20px;
+      }
+
+      #chart {
+        height: 400px;
+        width: 600px;
+        
+      }
+
+      .buy-crypto {
+        border: 1px solid #e1e1e1;
+        padding: 20px;
+        width: 600px;
+        margin-top: 20px;
+        background-color: #fff;
+      }
+
+      .buy-crypto h3 {
+        color: #333;
+        margin-top: 0;
+      }
+
+      .buy-crypto .message {
+        padding: 10px;
+        margin-bottom: 10px;
+        background: #fdf2f2;
+        border: 1px solid #fca3a3;
+        color: #d31c1c;
+      }
+
+      .buy-crypto input[type="text"],
+      .buy-crypto select {
+        margin-bottom: 10px;
+        padding: 8px;
+        width: 100%;
+        border: 1px solid #e1e1e1;
+      }
+
+      .buy-crypto input[type="submit"] {
+        padding: 8px 16px;
+        background-color: #007fff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+      }
+
+      .buy-crypto input[type="submit"]:hover {
+        background-color: #0066cc;
+      }
+
+      #settings {
+        margin-bottom: 10px;
+      }
+
+      #settings input[type="text"] {
+        margin-right: 10px;
+        padding: 8px;
+        width: 100px;
+        border: 1px solid #e1e1e1;
+      }
+
+      #settings button {
+        padding: 8px 16px;
+        background-color: #007fff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+      }
+      #lstm{
+        padding: 8px 16px;
+        background-color: #007fff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+      }
+
+      #settings button:hover {
+        background-color: #0066cc;
+      }
+
+      h3 {
+        color: #333;
+        margin-top: 20px;
+      }
+
+      #my_balances table {
+        border-collapse: collapse;
+        width: 400px;
+      }
+
+      #my_balances table td {
+        border: 1px solid #e1e1e1;
+        padding: 8px;
+      }
+    </style>
   </head>
   <body>
-    <h2>{{title}}</h2>
+    <h2 class="binance-title">{{title}}</h2>
 
 
     <form action="">
-      <select id="symbol" name="symbol">
+      <select id="symbol" name="symbol" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333;">
         {% for symbol in symbols %}
             <option>{{ symbol['symbol'] }}</option>
         {% endfor %}
     </select>
-    <input type="submit" name="show" value="show" />
-      <div id="chart"></div>
+     <div id="chart"></div>
     </form>
 
     <div id="trades"></div>
 
-    <div style="border: solid gray 1px; padding: 20px; width: 600px; margin-top: 20px;">
+    <div style="border: solid gray 1px; padding: 20px; width: 600px; margin-top: 100px;">
       <h3>Buy Crypto</h3>
       {% with messages = get_flashed_messages() %}
           {% if messages %}
@@ -35,21 +155,21 @@
 
       <form action="/buy" method="post">
           <input type="text" id="quantity" name="quantity" placeholder="eg. 0.001" />
-          <select id="symbol" name="symbol">
+          <select id="symbol" name="symbol" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333;">
               {% for symbol in symbols %}
                   <option>{{ symbol['symbol'] }}</option>
               {% endfor %}
           </select>
-          <input type="submit" name="buy" value="buy" />
+          <input type="submit" name="buy" value="buy" style="padding: 10px 20px; background-color: #15c177; color: #fff; border: none; border-radius: 4px; cursor: pointer;" />
       </form>
       <form action="/sell" method="post">
         <input type="text" id="quantity" name="quantity" placeholder="eg. 0.001" />
-        <select id="symbol" name="symbol">
+        <select id="symbol" name="symbol" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333;">
             {% for symbol in symbols %}
                 <option>{{ symbol['symbol'] }}</option>
             {% endfor %}
         </select>
-        <input type="submit" name="sell" value="sell" />
+        <input type="submit" name="sell" value="sell" style="padding: 10px 20px; background-color: #d93731; color: #fff; border: none; border-radius: 4px; cursor: pointer;"/>
     </form>
 
   </div>
@@ -69,7 +189,7 @@
     </form>
     <h3>LSTM</h3>
       <form method="POST" action="/run_python_script">
-        <button type="submit">Run Python Script</button>
+        <button type="submit" id="lstm">Run Python Script</button>
       </form>
 
     <div id="my_balances">

@@ -4,23 +4,24 @@ import config, csv, datetime
 from binance.client import Client
 from binance.enums import *
 import os
-import subprocess   
 
 app = Flask(__name__)
 app.secret_key = b'asdasfazamazqwezayraz'
 client = Client(config.API_KEY,config.API_SECRET,testnet=True)
 
-SOCKET = "wss://testnet.binance.vision/ws/ethusdt@kline_15m"
+SOCKET = "wss://testnet.binance.vision/ws/ethusdt@kline_1m"
 RSI_PERIOD = 14
 RSI_OVERBOUGHT = 70
 RSI_OVERSOLD = 30
 TRADE_SYMBOL = 'ethusdt'
-TRADE_QUANTITY = 100
+TRADE_QUANTITY = 0.05
+closes = []
+in_position = False
 
 @app.route("/")
 def index():
     print(request.form)
-    title = "CoinView"
+    title = "CoinTrade"
     account= client.get_account()
     balances = account['balances']
     exchange_info = client.get_exchange_info()
@@ -59,8 +60,9 @@ def settings():
 
 @app.route("/history")
 def history():
-    symbol = "ETHUSDT"
-    candlesticks = client.get_historical_klines(symbol,Client.KLINE_INTERVAL_1MINUTE, "1 day ago UTC")
+    # candlesticks = client.get_historical_klines("ethusdt",Client.KLINE_INTERVAL_1MINUTE, "1 day ago UTC")
+
+    candlesticks = client.get_historical_klines("BTCUSDT",Client.KLINE_INTERVAL_1MINUTE, "1 day ago UTC")
     processed_candlesticks = []
 
     for data in candlesticks:
@@ -79,12 +81,8 @@ def history():
 @app.route("/bot",methods=['POST'])
 def bot():
     
-    RSI_PERIOD = request.form["rsi_length"]
-    RSI_OVERBOUGHT = request.form["rsi_overbought"]
-    RSI_OVERSOLD = request.form["rsi_oversold"]
     
-    closes = []
-    in_position = False
+    
 
     def order(side, quantity, symbol,order_type=ORDER_TYPE_MARKET):
         try:
@@ -133,7 +131,7 @@ def bot():
                 if last_rsi > RSI_OVERBOUGHT:
                     if in_position:
                         print("Overbought! Sell! Sell! Sell!")
-                        # put binance sell logic here
+                        # binance sell logic
                         order_succeeded = order(SIDE_SELL, TRADE_QUANTITY, TRADE_SYMBOL)
                         if order_succeeded:
                             in_position = False
@@ -145,7 +143,7 @@ def bot():
                         print("It is oversold, but you already own it, nothing to do.")
                     else:
                         print("Oversold! Buy! Buy! Buy!")
-                        # put binance buy order logic here
+                        # binance buy order logic
                         order_succeeded = order(SIDE_BUY, TRADE_QUANTITY, TRADE_SYMBOL)
                         if order_succeeded:
                             in_position = True

@@ -49,12 +49,14 @@ fetch('http://127.0.0.1:5000/history')
 	.then((r) => r.json())
 	.then((response) => {
 		console.log(response)
+		
 
 		candleSeries.setData(response);
 	})
 
+// var binanceSocket = new WebSocket("wss://testnet.binance.vision/ws/ethusdt@kline_1m");
 
-var binanceSocket = new WebSocket("wss://testnet.binance.vision/ws/ETHUSDT@kline_1m");
+var binanceSocket = new WebSocket("wss://testnet.binance.vision/ws/btcusdt@kline_1m");
 
 binanceSocket.onmessage = function (event) {	
 	var message = JSON.parse(event.data);
