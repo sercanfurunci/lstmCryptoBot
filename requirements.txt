@@ -46,6 +46,7 @@ opt-einsum
 packaging
 pandas
 Pillow
+pip
 protobuf
 pyasn1
 pyasn1-modules
