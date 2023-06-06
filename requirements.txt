@@ -1,4 +1,5 @@
 absl-py
+libta-lib-dev
 aiohttp
 aiosignal
 astunparse
