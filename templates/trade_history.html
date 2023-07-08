@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trade History</title>
+</head>
+<body>
+    <h1>Trade History for all</h1>
+    <a href="/">Home</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Order ID</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Time</th>
+                <th>Buyer</th>
+                <th>Maker</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trade in trades %}
+            <tr>
+                <td>{{ trade.symbol }}</td>
+                <td>{{ trade.orderId }}</td>
+                <td>{{ trade.price }}</td>
+                <td>{{ trade.quantity }}</td>
+                <td>{{ trade.time }}</td>
+                <td>{{ trade.isBuyer }}</td>
+                <td>{{ trade.isMaker }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

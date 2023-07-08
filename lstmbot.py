@@ -324,7 +324,7 @@ while True:
   
     if order == False and float(price[len(price)-1]['price']) < float(scaler.inverse_transform(model.predict(model_feed).reshape(1, -1))[0][0]):    
           
-        #client.order_market_buy(symbol= symbol, quantity= quantity)                            
+        client.order_market_buy(symbol= symbol, quantity= quantity)                            
         order = True                                                                            
         buy_price = client.get_order_book(symbol=symbol)['asks'][0][0]                          
         print('Buy @Market Price :',float(buy_price),' Timestamp :',str(datetime.now()))
@@ -332,10 +332,10 @@ while True:
   
     elif order == True and float(price[len(price)-1]['price'])-float(buy_price) >= 10:            
           
-        #client.order_market_sell(symbol= symbol , quantity= quantity)                         #fires sell order to exhcange if conditionality satisfies  
-        order = False                                                                          #sets order = False and closes open position  
-        sell_price = client.get_order_book(symbol=symbol)['bids'][0][0]                        #gets the highest bid for the market order   
-        print('Sell @Market Price :',float(sell_price),' Timestamp :',str(datetime.now()))     #print sell price and datetime   
+        client.order_market_sell(symbol= symbol , quantity= quantity)                           
+        order = False                                                                            
+        sell_price = client.get_order_book(symbol=symbol)['bids'][0][0]                          
+        print('Sell @Market Price :',float(sell_price),' Timestamp :',str(datetime.now()))     
   
     else:  
         pass

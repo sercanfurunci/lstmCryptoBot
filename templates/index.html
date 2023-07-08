@@ -138,13 +138,13 @@
     </form>
 
     <div id="trades"></div>
+    
 
     <div style="border: solid gray 1px; padding: 20px; width: 600px; margin-top: 100px;">
       <h3>Buy Crypto</h3>
       {% with messages = get_flashed_messages() %}
           {% if messages %}
           <div style="padding: 10px; margin-bottom: 10px; background: pink; border: solid red 1px; color: red;">
-
               {% for message in messages %}
                   {{ message }}
               {% endfor %}
@@ -152,44 +152,63 @@
 
           {% endif %}
       {% endwith %}
-
       <form action="/buy" method="post">
-          <input type="text" id="quantity" name="quantity" placeholder="eg. 0.001" />
-          <select id="symbol" name="symbol" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333;">
-              {% for symbol in symbols %}
-                  <option>{{ symbol['symbol'] }}</option>
-              {% endfor %}
-          </select>
-          <input type="submit" name="buy" value="buy" style="padding: 10px 20px; background-color: #15c177; color: #fff; border: none; border-radius: 4px; cursor: pointer;" />
-      </form>
-      <form action="/sell" method="post">
         <input type="text" id="quantity" name="quantity" placeholder="eg. 0.001" />
-        <select id="symbol" name="symbol" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333;">
+        <select id="symbol" name="symbol" onchange="displayCurrentPrice(this)" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333;">
             {% for symbol in symbols %}
-                <option>{{ symbol['symbol'] }}</option>
+                <option value="{{ symbol['symbol'] }}">{{ symbol['symbol'] }}</option>
             {% endfor %}
         </select>
-        <input type="submit" name="sell" value="sell" style="padding: 10px 20px; background-color: #d93731; color: #fff; border: none; border-radius: 4px; cursor: pointer;"/>
+        <span id="currentPrice"></span>
+        <input type="submit" name="buy" value="buy" style="padding: 10px 20px; background-color: #15c177; color: #fff; border: none; border-radius: 4px; cursor: pointer;" />
     </form>
-
+    <form action="/sell" method="post">
+        <input type="text" id="quantity" name="quantity" placeholder="eg. 0.001" />
+        <select id="symbol" name="symbol" onchange="displayCurrentPrice(this)" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333;">
+            {% for symbol in symbols %}
+                <option value="{{ symbol['symbol'] }}">{{ symbol['symbol'] }}</option>
+            {% endfor %}
+        </select>
+        <span id="currentPrice"></span>
+        <input type="submit" name="sell" value="sell" style="padding: 10px 20px; background-color: red; color: #fff; border: none; border-radius: 4px; cursor: pointer;" />
+    </form>
+    <a href="/trade_history">Show Trades</a>
   </div>
 
   <h3>Settings</h3>
     <form action="/bot" method="post">
       <div id="settings">
+        <label for="symbol">Cryptocurrency:</label>
+          <select id="symbol" name="symbol" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333;">
+            {% for symbol in symbols %}
+              <option>{{ symbol['symbol'] }}</option>
+            {% endfor %}
+          </select>
+        <br>
+        <label for="trade_quantity">Trade Quantity:</label>
+        <input type="text" name="trade_quantity" id="trade_quantity" placeholder="1">
+        <br>
         RSI
         <input type="text" name="rsi_length" id="rsi_length" placeholder="14">
         Overbought
         <input type="text" name="rsi_overbought" id="rsi_overbought" placeholder="70">
         Oversold
         <input type="text" name="rsi_oversold" id="rsi_oversold" placeholder="30">
-        <button> Çalıştır bot</button>
-        
-      </div>
+        <button>RUN RSI BOT</button>
     </form>
+    
     <h3>LSTM</h3>
       <form method="POST" action="/run_python_script">
-        <button type="submit" id="lstm">Run Python Script</button>
+        <label for="symbol">Cryptocurrency:</label>
+          <select id="symbol" name="symbol" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; color: #333;">
+            {% for symbol in symbols %}
+              <option>{{ symbol['symbol'] }}</option>
+            {% endfor %}
+          </select>
+        <br>
+        <label for="trade_quantity">Trade Quantity:</label>
+        <input type="text" name="trade_quantity" id="trade_quantity" placeholder="1">
+        <button type="submit" id="lstm">RUN LSTM BOT</button>
       </form>
 
     <div id="my_balances">
@@ -211,24 +230,21 @@
     
   </body>
   
-  <script>
-    // var binanceSocket = new WebSocket(
-    //   "wss://stream.binance.com:9443/ws/btcusdt@trade"
-    // );
-
-    // var tradeDiv = document.getElementById("trades");
-    // binanceSocket.onmessage = function (e) {
-    //   console.log(e.data);
-
-    //   var messageObject = JSON.parse(e.data);
-
-    //   tradeDiv.append(messageObject.p);
-    // };
-  </script>
   <script src="{{url_for('static',filename='chart.js ')}}"></script>
-
-  
-
-
-
+  <script>
+    function displayCurrentPrice(selectElement) {
+        var symbol = selectElement.value;
+        var currentPriceElement = selectElement.nextElementSibling;
+        
+        // Make an AJAX request to fetch the current price of the selected symbol
+        fetch('/current_price?symbol=' + symbol)
+            .then(response => response.json())
+            .then(data => {
+                currentPriceElement.textContent = 'Current Price: ' + data.price;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+</script>
 </html>
